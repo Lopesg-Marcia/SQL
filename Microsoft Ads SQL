@@ -1,0 +1,111 @@
+SELECT COUNT(*) AS total_columns
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME = 'microads';
+
+SELECT COUNT(*) AS total_linhas
+FROM microads;
+
+DESCRIBE microads;
+
+SET SQL_SAFE_UPDATES = 0;
+
+UPDATE microads
+SET 
+    `Campaign name` = TRIM(`Campaign name`),
+    `clicks` = TRIM(`clicks`),
+    `impressions` = TRIM(`impressions`),
+    `CPC` = TRIM(`CPC`),
+    `CTR` = TRIM(`CTR`),
+    `Cost` = TRIM(`Cost`),
+    `Conversions` = TRIM(`Conversions`),
+    `Revenue` = TRIM(`Revenue`),
+    `CVR` = TRIM(`CVR`),
+    `CPA` = TRIM(`CPA`),
+    `RPC` = TRIM(`RPC`),
+    `ROI` = TRIM(`ROI`),
+    `ROAS` = TRIM(`ROAS`);
+
+UPDATE microads
+SET `CPC` = REPLACE(REPLACE(`CPC`, '$', ''), '%', ''),
+    `CTR` = REPLACE(REPLACE(`CTR`, '$', ''), '%', ''),
+    `Cost` = REPLACE(REPLACE(`Cost`, '$', ''), '%', ''),
+    `Revenue` = REPLACE(REPLACE(`Revenue`, '$', ''), '%', ''),
+    `CVR` = REPLACE(REPLACE(`CVR`, '$', ''), '%', ''),
+    `CPA` = REPLACE(REPLACE(`CPA`, '$', ''), '%', ''),
+    `RPC` = REPLACE(REPLACE(`RPC`, '$', ''), '%', ''),
+    `ROI` = REPLACE(REPLACE(`ROI`, '$', ''), '%', ''),
+    `ROAS` = REPLACE(REPLACE(`ROAS`, '$', ''), '%', '');
+    
+SET SQL_SAFE_UPDATES = 1;
+
+ALTER TABLE microads
+MODIFY COLUMN `CPC` DECIMAL(10,2),
+MODIFY COLUMN `CTR` DECIMAL(10,2),
+MODIFY COLUMN `Cost` DECIMAL(10,2),
+MODIFY COLUMN `Revenue` DECIMAL(10,2),
+MODIFY COLUMN `CVR` DECIMAL(10,2),
+MODIFY COLUMN `CPA` DECIMAL(10,2),
+MODIFY COLUMN `RPC` DECIMAL(10,2),
+MODIFY COLUMN `ROI` DECIMAL(10,2),
+MODIFY COLUMN `ROAS` DECIMAL(10,2);
+
+DESCRIBE microads;
+
+SELECT 
+    SUM(CASE WHEN `Campaign name` IS NULL THEN 1 ELSE 0 END) AS null_Campaign_name,
+    SUM(CASE WHEN `clicks` IS NULL THEN 1 ELSE 0 END) AS null_clicks,
+    SUM(CASE WHEN `impressions` IS NULL THEN 1 ELSE 0 END) AS null_impressions,
+    SUM(CASE WHEN `CPC` IS NULL THEN 1 ELSE 0 END) AS null_CPC,
+    SUM(CASE WHEN `CTR` IS NULL THEN 1 ELSE 0 END) AS null_CTR,
+    SUM(CASE WHEN `Cost` IS NULL THEN 1 ELSE 0 END) AS null_Cost,
+	SUM(CASE WHEN `conversions` IS NULL THEN 1 ELSE 0 END) AS null_conversions,
+    SUM(CASE WHEN `Revenue` IS NULL THEN 1 ELSE 0 END) AS null_Revenue,
+    SUM(CASE WHEN `CVR` IS NULL THEN 1 ELSE 0 END) AS null_CVR,
+    SUM(CASE WHEN `CPA` IS NULL THEN 1 ELSE 0 END) AS null_CPA,
+    SUM(CASE WHEN `RPC` IS NULL THEN 1 ELSE 0 END) AS null_RPC,
+    SUM(CASE WHEN `ROI` IS NULL THEN 1 ELSE 0 END) AS null_ROI,
+    SUM(CASE WHEN `ROAS` IS NULL THEN 1 ELSE 0 END) AS null_ROAS
+FROM microads;
+
+SELECT 
+    `Campaign name`, 
+    `clicks`, 
+    `impressions`, 
+    `CPC`, 
+    `CTR`, 
+    `Cost`, 
+    `Conversions`,
+    `Revenue`, 
+    `CVR`, 
+    `CPA`, 
+    `RPC`, 
+    `ROI`, 
+    `ROAS`,
+    COUNT(*) AS count_duplicates
+FROM microads
+GROUP BY 
+    `Campaign name`, 
+    `clicks`, 
+    `impressions`, 
+    `CPC`, 
+    `CTR`, 
+    `Cost`, 
+    `Conversions`,
+    `Revenue`, 
+    `CVR`, 
+    `CPA`, 
+    `RPC`, 
+    `ROI`, 
+    `ROAS`
+HAVING COUNT(*) > 1;
+
+SHOW VARIABLES LIKE 'secure_file_priv';
+
+SELECT *
+FROM microads
+INTO OUTFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/microads_adjusted.csv'
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n';
+
+
